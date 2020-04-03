@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sam.mapper.ReceDetailMapper" >
+  <resultMap id="BaseResultMap" type="com.sam.pojo.ReceDetail" >
+    <id column="deta_id" property="detaId" jdbcType="INTEGER" />
+    <result column="deta_rece_id" property="detaReceId" jdbcType="INTEGER" />
+    <result column="deta_goods_id" property="detaGoodsId" jdbcType="INTEGER" />
+    <result column="deta_num" property="detaNum" jdbcType="INTEGER" />
+    <result column="deta_price" property="detaPrice" jdbcType="DECIMAL" />
+    <result column="deta_fresh" property="detaFresh" jdbcType="DATE" />
+    <result column="deta_sell_price" property="detaSellPrice" jdbcType="DECIMAL" />
+
+    <!--关联查询goods获取部分字段-->
+    <result column="goods_name" property="goodsName" jdbcType="VARCHAR"/>
+    <result column="goods_unit" property="goodsUnit" jdbcType="VARCHAR"/>
+
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    rece_detail.deta_id,
+    rece_detail.deta_rece_id,
+    rece_detail.deta_goods_id,
+    rece_detail.deta_num,
+    rece_detail.deta_price,
+    rece_detail.deta_fresh,
+    rece_detail.deta_sell_price,
+    goods.goods_name,
+    goods.goods_unit
+    FROM
+    rece_detail
+    left JOIN goods ON rece_detail.deta_goods_id = goods.goods_id
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.sam.pojo.ReceDetailExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select
+    <include refid="Base_Column_List" />
+    where deta_id = #{detaId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from rece_detail
+    where deta_id = #{detaId,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.sam.pojo.ReceDetailExample" >
+    delete from rece_detail
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.sam.pojo.ReceDetail" >
+    insert into rece_detail (deta_id, deta_rece_id, deta_goods_id,
+      deta_num, deta_price, deta_fresh,
+      deta_sell_price)
+    values (#{detaId,jdbcType=INTEGER}, #{detaReceId,jdbcType=INTEGER}, #{detaGoodsId,jdbcType=INTEGER},
+      #{detaNum,jdbcType=INTEGER}, #{detaPrice,jdbcType=DECIMAL}, #{detaFresh,jdbcType=DATE},
+      #{detaSellPrice,jdbcType=DECIMAL})
+  </insert>
+  <insert id="insertSelective" parameterType="com.sam.pojo.ReceDetail" >
+    insert into rece_detail
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="detaId != null" >
+        deta_id,
+      </if>
+      <if test="detaReceId != null" >
+        deta_rece_id,
+      </if>
+      <if test="detaGoodsId != null" >
+        deta_goods_id,
+      </if>
+      <if test="detaNum != null" >
+        deta_num,
+      </if>
+      <if test="detaPrice != null" >
+        deta_price,
+      </if>
+      <if test="detaFresh != null" >
+        deta_fresh,
+      </if>
+      <if test="detaSellPrice != null" >
+        deta_sell_price,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="detaId != null" >
+        #{detaId,jdbcType=INTEGER},
+      </if>
+      <if test="detaReceId != null" >
+        #{detaReceId,jdbcType=INTEGER},
+      </if>
+      <if test="detaGoodsId != null" >
+        #{detaGoodsId,jdbcType=INTEGER},
+      </if>
+      <if test="detaNum != null" >
+        #{detaNum,jdbcType=INTEGER},
+      </if>
+      <if test="detaPrice != null" >
+        #{detaPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="detaFresh != null" >
+        #{detaFresh,jdbcType=DATE},
+      </if>
+      <if test="detaSellPrice != null" >
+        #{detaSellPrice,jdbcType=DECIMAL},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.sam.pojo.ReceDetailExample" resultType="java.lang.Integer" >
+    select count(*) from rece_detail
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update rece_detail
+    <set >
+      <if test="record.detaId != null" >
+        deta_id = #{record.detaId,jdbcType=INTEGER},
+      </if>
+      <if test="record.detaReceId != null" >
+        deta_rece_id = #{record.detaReceId,jdbcType=INTEGER},
+      </if>
+      <if test="record.detaGoodsId != null" >
+        deta_goods_id = #{record.detaGoodsId,jdbcType=INTEGER},
+      </if>
+      <if test="record.detaNum != null" >
+        deta_num = #{record.detaNum,jdbcType=INTEGER},
+      </if>
+      <if test="record.detaPrice != null" >
+        deta_price = #{record.detaPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="record.detaFresh != null" >
+        deta_fresh = #{record.detaFresh,jdbcType=DATE},
+      </if>
+      <if test="record.detaSellPrice != null" >
+        deta_sell_price = #{record.detaSellPrice,jdbcType=DECIMAL},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update rece_detail
+    set deta_id = #{record.detaId,jdbcType=INTEGER},
+    deta_rece_id = #{record.detaReceId,jdbcType=INTEGER},
+    deta_goods_id = #{record.detaGoodsId,jdbcType=INTEGER},
+    deta_num = #{record.detaNum,jdbcType=INTEGER},
+    deta_price = #{record.detaPrice,jdbcType=DECIMAL},
+    deta_fresh = #{record.detaFresh,jdbcType=DATE},
+    deta_sell_price = #{record.detaSellPrice,jdbcType=DECIMAL}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.sam.pojo.ReceDetail" >
+    update rece_detail
+    <set >
+      <if test="detaReceId != null" >
+        deta_rece_id = #{detaReceId,jdbcType=INTEGER},
+      </if>
+      <if test="detaGoodsId != null" >
+        deta_goods_id = #{detaGoodsId,jdbcType=INTEGER},
+      </if>
+      <if test="detaNum != null" >
+        deta_num = #{detaNum,jdbcType=INTEGER},
+      </if>
+      <if test="detaPrice != null" >
+        deta_price = #{detaPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="detaFresh != null" >
+        deta_fresh = #{detaFresh,jdbcType=DATE},
+      </if>
+      <if test="detaSellPrice != null" >
+        deta_sell_price = #{detaSellPrice,jdbcType=DECIMAL},
+      </if>
+    </set>
+    where deta_id = #{detaId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.sam.pojo.ReceDetail" >
+    update rece_detail
+    set deta_rece_id = #{detaReceId,jdbcType=INTEGER},
+      deta_goods_id = #{detaGoodsId,jdbcType=INTEGER},
+      deta_num = #{detaNum,jdbcType=INTEGER},
+      deta_price = #{detaPrice,jdbcType=DECIMAL},
+      deta_fresh = #{detaFresh,jdbcType=DATE},
+      deta_sell_price = #{detaSellPrice,jdbcType=DECIMAL}
+    where deta_id = #{detaId,jdbcType=INTEGER}
+  </update>
+</mapper>

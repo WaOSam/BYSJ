@@ -1,0 +1,298 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sam.mapper.StoreMapper" >
+  <resultMap id="BaseResultMap" type="com.sam.pojo.Store" >
+    <id column="store_id" property="storeId" jdbcType="INTEGER" />
+    <result column="rece_id" property="receId" jdbcType="INTEGER" />
+    <result column="goods_id" property="goodsId" jdbcType="INTEGER" />
+    <result column="rece_num" property="receNum" jdbcType="INTEGER" />
+    <result column="rece_price" property="recePrice" jdbcType="DECIMAL" />
+    <result column="fresh" property="fresh" jdbcType="DATE" />
+    <result column="remain" property="remain" jdbcType="INTEGER" />
+    <result column="sell" property="sell" jdbcType="DECIMAL" />
+    <result column="note" property="note" jdbcType="VARCHAR" />
+
+<!--关联查询goods以及receipt中的部分字段-->
+    <result column="goods_name" property="goodsName" jdbcType="VARCHAR" />
+    <result column="goods_unit" property="goodsUnit" jdbcType="VARCHAR" />
+    <result column="goods_warn" property="goodsWarn" jdbcType="INTEGER" />
+    <result column="rece_createtime" property="stockTime" jdbcType="DATE" />
+
+
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    store.store_id,
+    store.rece_id,
+    store.goods_id,
+    store.rece_num,
+    store.rece_price,
+    store.fresh,
+    store.remain,
+    store.sell,
+    receipt.rece_createtime,
+    goods.goods_name,
+    goods.goods_unit,
+    goods.goods_warn
+    FROM
+    store
+    left JOIN receipt ON store.rece_id = receipt.rece_id
+    left JOIN goods ON store.goods_id = goods.goods_id
+  </sql>
+
+
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.sam.pojo.StoreExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    where store_id = #{storeId,jdbcType=INTEGER}
+  </select>
+
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from store
+    where store_id = #{storeId,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.sam.pojo.StoreExample" >
+    delete from store
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.sam.pojo.Store" >
+    insert into store (store_id, rece_id, goods_id, 
+      rece_num, rece_price, fresh, 
+      remain, sell, note)
+    values (#{storeId,jdbcType=INTEGER}, #{receId,jdbcType=INTEGER}, #{goodsId,jdbcType=INTEGER}, 
+      #{receNum,jdbcType=INTEGER}, #{recePrice,jdbcType=DECIMAL}, #{fresh,jdbcType=DATE}, 
+      #{remain,jdbcType=INTEGER}, #{sell,jdbcType=DECIMAL}, #{note,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.sam.pojo.Store" >
+    insert into store
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="storeId != null" >
+        store_id,
+      </if>
+      <if test="receId != null" >
+        rece_id,
+      </if>
+      <if test="goodsId != null" >
+        goods_id,
+      </if>
+      <if test="receNum != null" >
+        rece_num,
+      </if>
+      <if test="recePrice != null" >
+        rece_price,
+      </if>
+      <if test="fresh != null" >
+        fresh,
+      </if>
+      <if test="remain != null" >
+        remain,
+      </if>
+      <if test="sell != null" >
+        sell,
+      </if>
+      <if test="note != null" >
+        note,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="storeId != null" >
+        #{storeId,jdbcType=INTEGER},
+      </if>
+      <if test="receId != null" >
+        #{receId,jdbcType=INTEGER},
+      </if>
+      <if test="goodsId != null" >
+        #{goodsId,jdbcType=INTEGER},
+      </if>
+      <if test="receNum != null" >
+        #{receNum,jdbcType=INTEGER},
+      </if>
+      <if test="recePrice != null" >
+        #{recePrice,jdbcType=DECIMAL},
+      </if>
+      <if test="fresh != null" >
+        #{fresh,jdbcType=DATE},
+      </if>
+      <if test="remain != null" >
+        #{remain,jdbcType=INTEGER},
+      </if>
+      <if test="sell != null" >
+        #{sell,jdbcType=DECIMAL},
+      </if>
+      <if test="note != null" >
+        #{note,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.sam.pojo.StoreExample" resultType="java.lang.Integer" >
+    select count(*) from store
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update store
+    <set >
+      <if test="record.storeId != null" >
+        store_id = #{record.storeId,jdbcType=INTEGER},
+      </if>
+      <if test="record.receId != null" >
+        rece_id = #{record.receId,jdbcType=INTEGER},
+      </if>
+      <if test="record.goodsId != null" >
+        goods_id = #{record.goodsId,jdbcType=INTEGER},
+      </if>
+      <if test="record.receNum != null" >
+        rece_num = #{record.receNum,jdbcType=INTEGER},
+      </if>
+      <if test="record.recePrice != null" >
+        rece_price = #{record.recePrice,jdbcType=DECIMAL},
+      </if>
+      <if test="record.fresh != null" >
+        fresh = #{record.fresh,jdbcType=DATE},
+      </if>
+      <if test="record.remain != null" >
+        remain = #{record.remain,jdbcType=INTEGER},
+      </if>
+      <if test="record.sell != null" >
+        sell = #{record.sell,jdbcType=DECIMAL},
+      </if>
+      <if test="record.note != null" >
+        note = #{record.note,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update store
+    set store_id = #{record.storeId,jdbcType=INTEGER},
+      rece_id = #{record.receId,jdbcType=INTEGER},
+      goods_id = #{record.goodsId,jdbcType=INTEGER},
+      rece_num = #{record.receNum,jdbcType=INTEGER},
+      rece_price = #{record.recePrice,jdbcType=DECIMAL},
+      fresh = #{record.fresh,jdbcType=DATE},
+      remain = #{record.remain,jdbcType=INTEGER},
+      sell = #{record.sell,jdbcType=DECIMAL},
+      note = #{record.note,jdbcType=VARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.sam.pojo.Store" >
+    update store
+    <set >
+      <if test="receId != null" >
+        rece_id = #{receId,jdbcType=INTEGER},
+      </if>
+      <if test="goodsId != null" >
+        goods_id = #{goodsId,jdbcType=INTEGER},
+      </if>
+      <if test="receNum != null" >
+        rece_num = #{receNum,jdbcType=INTEGER},
+      </if>
+      <if test="recePrice != null" >
+        rece_price = #{recePrice,jdbcType=DECIMAL},
+      </if>
+      <if test="fresh != null" >
+        fresh = #{fresh,jdbcType=DATE},
+      </if>
+      <if test="remain != null" >
+        remain = #{remain,jdbcType=INTEGER},
+      </if>
+      <if test="sell != null" >
+        sell = #{sell,jdbcType=DECIMAL},
+      </if>
+      <if test="note != null" >
+        note = #{note,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where store_id = #{storeId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.sam.pojo.Store" >
+    update store
+    set rece_id = #{receId,jdbcType=INTEGER},
+      goods_id = #{goodsId,jdbcType=INTEGER},
+      rece_num = #{receNum,jdbcType=INTEGER},
+      rece_price = #{recePrice,jdbcType=DECIMAL},
+      fresh = #{fresh,jdbcType=DATE},
+      remain = #{remain,jdbcType=INTEGER},
+      sell = #{sell,jdbcType=DECIMAL},
+      note = #{note,jdbcType=VARCHAR}
+    where store_id = #{storeId,jdbcType=INTEGER}
+  </update>
+</mapper>

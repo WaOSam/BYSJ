@@ -1,0 +1,312 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sam.mapper.SaleMapper" >
+  <resultMap id="BaseResultMap" type="com.sam.pojo.Sale" >
+    <id column="sale_id" property="saleId" jdbcType="INTEGER" />
+    <result column="sale_createtime" property="saleCreatetime" jdbcType="TIMESTAMP" />
+    <result column="sale_cust_id" property="saleCustId" jdbcType="INTEGER" />
+    <result column="sale_user_id" property="saleUserId" jdbcType="INTEGER" />
+    <result column="sale_sum" property="saleSum" jdbcType="DECIMAL" />
+    <result column="sale_state" property="saleState" jdbcType="INTEGER" />
+    <result column="sale_note" property="saleNote" jdbcType="VARCHAR" />
+
+    <!--关联获取user以及customer部分字段-->
+    <result column="cust_name" property="custName" jdbcType="VARCHAR"/>
+    <result column="cust_phone" property="custPhone" jdbcType="VARCHAR"/>
+    <result column="user_name" property="userName" jdbcType="VARCHAR"/>
+
+    <!--一对多联表查询详情-->
+    <collection property="saleDetailList" ofType="com.sam.pojo.SaleDetail">
+      <id column="deta_id" property="detaId" jdbcType="INTEGER"/>
+      <result column="deta_sale_id" property="detaSaleId" jdbcType="INTEGER"/>
+      <result column="deta_goods_id" property="detaGoodsId" jdbcType="INTEGER"/>
+      <result column="deta_num" property="detaNum" jdbcType="INTEGER"/>
+      <result column="deta_price" property="detaPrice" jdbcType="DECIMAL"/>
+    </collection>
+
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+
+<!--只在单个查询时一对多，条件查询时只使用一对一-->
+  <sql id="Base_Column_List" >
+    sale.sale_id,
+    sale.sale_createtime,
+    sale.sale_cust_id,
+    sale.sale_user_id,
+    sale.sale_sum,
+    sale.sale_state,
+    sale.sale_note,
+    sale_detail.deta_id,
+    sale_detail.deta_sale_id,
+    sale_detail.deta_goods_id,
+    sale_detail.deta_num,
+    sale_detail.deta_price,
+    customer.cust_name,
+    customer.cust_phone,
+    `user`.user_name
+    FROM
+    sale
+    left JOIN sale_detail ON sale_detail.deta_sale_id = sale.sale_id
+    left JOIN `user` ON sale.sale_user_id = `user`.user_account
+    left JOIN customer ON sale.sale_cust_id = customer.cust_id
+  </sql>
+
+<!--条件查询后返回的类型，不包含详情列表-->
+  <resultMap id="example" type="com.sam.pojo.Sale" >
+    <id column="sale_id" property="saleId" jdbcType="INTEGER" />
+    <result column="sale_createtime" property="saleCreatetime" jdbcType="TIMESTAMP" />
+    <result column="sale_cust_id" property="saleCustId" jdbcType="INTEGER" />
+    <result column="sale_user_id" property="saleUserId" jdbcType="INTEGER" />
+    <result column="sale_sum" property="saleSum" jdbcType="DECIMAL" />
+    <result column="sale_state" property="saleState" jdbcType="INTEGER" />
+    <result column="sale_note" property="saleNote" jdbcType="VARCHAR" />
+
+
+    <!--关联获取user以及customer部分字段-->
+    <result column="cust_name" property="custName" jdbcType="VARCHAR"/>
+    <result column="cust_phone" property="custPhone" jdbcType="VARCHAR"/>
+    <result column="user_name" property="userName" jdbcType="VARCHAR"/>
+
+  </resultMap>
+
+
+  <select id="selectByExample" resultMap="example" parameterType="com.sam.pojo.SaleExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+
+    sale.sale_id,
+    sale.sale_createtime,
+    sale.sale_cust_id,
+    sale.sale_user_id,
+    sale.sale_sum,
+    sale.sale_state,
+    sale.sale_note,
+    customer.cust_name,
+    customer.cust_phone,
+    `user`.user_name
+    FROM
+    sale
+    LEFT JOIN `user` ON sale.sale_user_id = `user`.user_account
+    LEFT JOIN customer ON sale.sale_cust_id = customer.cust_id
+
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    where sale_id = #{saleId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from sale
+    where sale_id = #{saleId,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.sam.pojo.SaleExample" >
+    delete from sale
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.sam.pojo.Sale" >
+    insert into sale (sale_id, sale_createtime, sale_cust_id, 
+      sale_user_id, sale_sum, sale_state, 
+      sale_note)
+    values (#{saleId,jdbcType=INTEGER}, #{saleCreatetime,jdbcType=TIMESTAMP}, #{saleCustId,jdbcType=INTEGER}, 
+      #{saleUserId,jdbcType=INTEGER}, #{saleSum,jdbcType=DECIMAL}, #{saleState,jdbcType=INTEGER}, 
+      #{saleNote,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.sam.pojo.Sale" >
+    insert into sale
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="saleId != null" >
+        sale_id,
+      </if>
+      <if test="saleCreatetime != null" >
+        sale_createtime,
+      </if>
+      <if test="saleCustId != null" >
+        sale_cust_id,
+      </if>
+      <if test="saleUserId != null" >
+        sale_user_id,
+      </if>
+      <if test="saleSum != null" >
+        sale_sum,
+      </if>
+      <if test="saleState != null" >
+        sale_state,
+      </if>
+      <if test="saleNote != null" >
+        sale_note,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="saleId != null" >
+        #{saleId,jdbcType=INTEGER},
+      </if>
+      <if test="saleCreatetime != null" >
+        #{saleCreatetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="saleCustId != null" >
+        #{saleCustId,jdbcType=INTEGER},
+      </if>
+      <if test="saleUserId != null" >
+        #{saleUserId,jdbcType=INTEGER},
+      </if>
+      <if test="saleSum != null" >
+        #{saleSum,jdbcType=DECIMAL},
+      </if>
+      <if test="saleState != null" >
+        #{saleState,jdbcType=INTEGER},
+      </if>
+      <if test="saleNote != null" >
+        #{saleNote,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.sam.pojo.SaleExample" resultType="java.lang.Integer" >
+    select count(*) from sale
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update sale
+    <set >
+      <if test="record.saleId != null" >
+        sale_id = #{record.saleId,jdbcType=INTEGER},
+      </if>
+      <if test="record.saleCreatetime != null" >
+        sale_createtime = #{record.saleCreatetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.saleCustId != null" >
+        sale_cust_id = #{record.saleCustId,jdbcType=INTEGER},
+      </if>
+      <if test="record.saleUserId != null" >
+        sale_user_id = #{record.saleUserId,jdbcType=INTEGER},
+      </if>
+      <if test="record.saleSum != null" >
+        sale_sum = #{record.saleSum,jdbcType=DECIMAL},
+      </if>
+      <if test="record.saleState != null" >
+        sale_state = #{record.saleState,jdbcType=INTEGER},
+      </if>
+      <if test="record.saleNote != null" >
+        sale_note = #{record.saleNote,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update sale
+    set sale_id = #{record.saleId,jdbcType=INTEGER},
+      sale_createtime = #{record.saleCreatetime,jdbcType=TIMESTAMP},
+      sale_cust_id = #{record.saleCustId,jdbcType=INTEGER},
+      sale_user_id = #{record.saleUserId,jdbcType=INTEGER},
+      sale_sum = #{record.saleSum,jdbcType=DECIMAL},
+      sale_state = #{record.saleState,jdbcType=INTEGER},
+      sale_note = #{record.saleNote,jdbcType=VARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.sam.pojo.Sale" >
+    update sale
+    <set >
+      <if test="saleCreatetime != null" >
+        sale_createtime = #{saleCreatetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="saleCustId != null" >
+        sale_cust_id = #{saleCustId,jdbcType=INTEGER},
+      </if>
+      <if test="saleUserId != null" >
+        sale_user_id = #{saleUserId,jdbcType=INTEGER},
+      </if>
+      <if test="saleSum != null" >
+        sale_sum = #{saleSum,jdbcType=DECIMAL},
+      </if>
+      <if test="saleState != null" >
+        sale_state = #{saleState,jdbcType=INTEGER},
+      </if>
+      <if test="saleNote != null" >
+        sale_note = #{saleNote,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where sale_id = #{saleId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.sam.pojo.Sale" >
+    update sale
+    set sale_createtime = #{saleCreatetime,jdbcType=TIMESTAMP},
+      sale_cust_id = #{saleCustId,jdbcType=INTEGER},
+      sale_user_id = #{saleUserId,jdbcType=INTEGER},
+      sale_sum = #{saleSum,jdbcType=DECIMAL},
+      sale_state = #{saleState,jdbcType=INTEGER},
+      sale_note = #{saleNote,jdbcType=VARCHAR}
+    where sale_id = #{saleId,jdbcType=INTEGER}
+  </update>
+</mapper>
