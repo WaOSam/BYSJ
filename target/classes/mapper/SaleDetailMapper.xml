@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sam.mapper.SaleDetailMapper">
+    <resultMap id="BaseResultMap" type="com.sam.pojo.SaleDetail">
+        <id column="deta_id" property="detaId" jdbcType="INTEGER"/>
+        <result column="deta_sale_id" property="detaSaleId" jdbcType="INTEGER"/>
+        <result column="deta_goods_id" property="detaGoodsId" jdbcType="INTEGER"/>
+        <result column="deta_num" property="detaNum" jdbcType="INTEGER"/>
+        <result column="deta_price" property="detaPrice" jdbcType="DECIMAL"/>
+
+        <!--关联查询goods获取部分字段-->
+        <result column="goods_name" property="goodsName" jdbcType="VARCHAR"/>
+        <result column="goods_unit" property="goodsUnit" jdbcType="VARCHAR"/>
+
+    </resultMap>
+    <sql id="Example_Where_Clause">
+        <where>
+            <foreach collection="oredCriteria" item="criteria" separator="or">
+                <if test="criteria.valid">
+                    <trim prefix="(" suffix=")" prefixOverrides="and">
+                        <foreach collection="criteria.criteria" item="criterion">
+                            <choose>
+                                <when test="criterion.noValue">
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue">
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue">
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue">
+                                    and ${criterion.condition}
+                                    <foreach collection="criterion.value" item="listItem" open="(" close=")"
+                                             separator=",">
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
+            </foreach>
+        </where>
+    </sql>
+    <sql id="Update_By_Example_Where_Clause">
+        <where>
+            <foreach collection="example.oredCriteria" item="criteria" separator="or">
+                <if test="criteria.valid">
+                    <trim prefix="(" suffix=")" prefixOverrides="and">
+                        <foreach collection="criteria.criteria" item="criterion">
+                            <choose>
+                                <when test="criterion.noValue">
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue">
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue">
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue">
+                                    and ${criterion.condition}
+                                    <foreach collection="criterion.value" item="listItem" open="(" close=")"
+                                             separator=",">
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
+            </foreach>
+        </where>
+    </sql>
+
+
+    <sql id="Base_Column_List">
+    sale_detail.deta_id,
+    sale_detail.deta_sale_id,
+    sale_detail.deta_goods_id,
+    sale_detail.deta_num,
+    sale_detail.deta_price,
+    goods.goods_name,
+    goods.goods_unit
+    FROM
+    sale_detail
+    left JOIN store ON sale_detail.deta_goods_id = store.store_id
+    left JOIN goods ON store.goods_id = goods.goods_id
+  </sql>
+
+
+    <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.sam.pojo.SaleDetailExample">
+        select
+        <if test="distinct">
+            distinct
+        </if>
+        <include refid="Base_Column_List"/>
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+        <if test="orderByClause != null">
+            order by ${orderByClause}
+        </if>
+    </select>
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+        select
+        <include refid="Base_Column_List"/>
+        where deta_id = #{detaId,jdbcType=INTEGER}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from sale_detail
+    where deta_id = #{detaId,jdbcType=INTEGER}
+  </delete>
+    <delete id="deleteByExample" parameterType="com.sam.pojo.SaleDetailExample">
+        delete from sale_detail
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+    </delete>
+    <insert id="insert" parameterType="com.sam.pojo.SaleDetail">
+    insert into sale_detail (deta_id, deta_sale_id, deta_goods_id, 
+      deta_num, deta_price)
+    values (#{detaId,jdbcType=INTEGER}, #{detaSaleId,jdbcType=INTEGER}, #{detaGoodsId,jdbcType=INTEGER}, 
+      #{detaNum,jdbcType=INTEGER}, #{detaPrice,jdbcType=DECIMAL})
+  </insert>
+    <insert id="insertSelective" parameterType="com.sam.pojo.SaleDetail">
+        insert into sale_detail
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="detaId != null">
+                deta_id,
+            </if>
+            <if test="detaSaleId != null">
+                deta_sale_id,
+            </if>
+            <if test="detaGoodsId != null">
+                deta_goods_id,
+            </if>
+            <if test="detaNum != null">
+                deta_num,
+            </if>
+            <if test="detaPrice != null">
+                deta_price,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="detaId != null">
+                #{detaId,jdbcType=INTEGER},
+            </if>
+            <if test="detaSaleId != null">
+                #{detaSaleId,jdbcType=INTEGER},
+            </if>
+            <if test="detaGoodsId != null">
+                #{detaGoodsId,jdbcType=INTEGER},
+            </if>
+            <if test="detaNum != null">
+                #{detaNum,jdbcType=INTEGER},
+            </if>
+            <if test="detaPrice != null">
+                #{detaPrice,jdbcType=DECIMAL},
+            </if>
+        </trim>
+    </insert>
+    <select id="countByExample" parameterType="com.sam.pojo.SaleDetailExample" resultType="java.lang.Integer">
+        select count(*) from sale_detail
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+    </select>
+    <update id="updateByExampleSelective" parameterType="map">
+        update sale_detail
+        <set>
+            <if test="record.detaId != null">
+                deta_id = #{record.detaId,jdbcType=INTEGER},
+            </if>
+            <if test="record.detaSaleId != null">
+                deta_sale_id = #{record.detaSaleId,jdbcType=INTEGER},
+            </if>
+            <if test="record.detaGoodsId != null">
+                deta_goods_id = #{record.detaGoodsId,jdbcType=INTEGER},
+            </if>
+            <if test="record.detaNum != null">
+                deta_num = #{record.detaNum,jdbcType=INTEGER},
+            </if>
+            <if test="record.detaPrice != null">
+                deta_price = #{record.detaPrice,jdbcType=DECIMAL},
+            </if>
+        </set>
+        <if test="_parameter != null">
+            <include refid="Update_By_Example_Where_Clause"/>
+        </if>
+    </update>
+    <update id="updateByExample" parameterType="map">
+        update sale_detail
+        set deta_id = #{record.detaId,jdbcType=INTEGER},
+        deta_sale_id = #{record.detaSaleId,jdbcType=INTEGER},
+        deta_goods_id = #{record.detaGoodsId,jdbcType=INTEGER},
+        deta_num = #{record.detaNum,jdbcType=INTEGER},
+        deta_price = #{record.detaPrice,jdbcType=DECIMAL}
+        <if test="_parameter != null">
+            <include refid="Update_By_Example_Where_Clause"/>
+        </if>
+    </update>
+    <update id="updateByPrimaryKeySelective" parameterType="com.sam.pojo.SaleDetail">
+        update sale_detail
+        <set>
+            <if test="detaSaleId != null">
+                deta_sale_id = #{detaSaleId,jdbcType=INTEGER},
+            </if>
+            <if test="detaGoodsId != null">
+                deta_goods_id = #{detaGoodsId,jdbcType=INTEGER},
+            </if>
+            <if test="detaNum != null">
+                deta_num = #{detaNum,jdbcType=INTEGER},
+            </if>
+            <if test="detaPrice != null">
+                deta_price = #{detaPrice,jdbcType=DECIMAL},
+            </if>
+        </set>
+        where deta_id = #{detaId,jdbcType=INTEGER}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.sam.pojo.SaleDetail">
+    update sale_detail
+    set deta_sale_id = #{detaSaleId,jdbcType=INTEGER},
+      deta_goods_id = #{detaGoodsId,jdbcType=INTEGER},
+      deta_num = #{detaNum,jdbcType=INTEGER},
+      deta_price = #{detaPrice,jdbcType=DECIMAL}
+    where deta_id = #{detaId,jdbcType=INTEGER}
+  </update>
+</mapper>

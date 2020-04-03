@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sam.mapper.SupplierMapper" >
+  <resultMap id="BaseResultMap" type="com.sam.pojo.Supplier" >
+    <id column="supp_id" property="suppId" jdbcType="INTEGER" />
+    <result column="supp_name" property="suppName" jdbcType="VARCHAR" />
+    <result column="supp_address" property="suppAddress" jdbcType="VARCHAR" />
+    <result column="supp_phone" property="suppPhone" jdbcType="VARCHAR" />
+    <result column="supp_email" property="suppEmail" jdbcType="VARCHAR" />
+    <result column="supp_bank" property="suppBank" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    supp_id, supp_name, supp_address, supp_phone, supp_email, supp_bank
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.sam.pojo.SupplierExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from supplier
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select
+    <include refid="Base_Column_List" />
+    from supplier
+    where supp_id = #{suppId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from supplier
+    where supp_id = #{suppId,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.sam.pojo.SupplierExample" >
+    delete from supplier
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.sam.pojo.Supplier" >
+    insert into supplier (supp_id, supp_name, supp_address, 
+      supp_phone, supp_email, supp_bank
+      )
+    values (#{suppId,jdbcType=INTEGER}, #{suppName,jdbcType=VARCHAR}, #{suppAddress,jdbcType=VARCHAR}, 
+      #{suppPhone,jdbcType=VARCHAR}, #{suppEmail,jdbcType=VARCHAR}, #{suppBank,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.sam.pojo.Supplier" >
+    insert into supplier
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="suppId != null" >
+        supp_id,
+      </if>
+      <if test="suppName != null" >
+        supp_name,
+      </if>
+      <if test="suppAddress != null" >
+        supp_address,
+      </if>
+      <if test="suppPhone != null" >
+        supp_phone,
+      </if>
+      <if test="suppEmail != null" >
+        supp_email,
+      </if>
+      <if test="suppBank != null" >
+        supp_bank,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="suppId != null" >
+        #{suppId,jdbcType=INTEGER},
+      </if>
+      <if test="suppName != null" >
+        #{suppName,jdbcType=VARCHAR},
+      </if>
+      <if test="suppAddress != null" >
+        #{suppAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="suppPhone != null" >
+        #{suppPhone,jdbcType=VARCHAR},
+      </if>
+      <if test="suppEmail != null" >
+        #{suppEmail,jdbcType=VARCHAR},
+      </if>
+      <if test="suppBank != null" >
+        #{suppBank,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.sam.pojo.SupplierExample" resultType="java.lang.Integer" >
+    select count(*) from supplier
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update supplier
+    <set >
+      <if test="record.suppId != null" >
+        supp_id = #{record.suppId,jdbcType=INTEGER},
+      </if>
+      <if test="record.suppName != null" >
+        supp_name = #{record.suppName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.suppAddress != null" >
+        supp_address = #{record.suppAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="record.suppPhone != null" >
+        supp_phone = #{record.suppPhone,jdbcType=VARCHAR},
+      </if>
+      <if test="record.suppEmail != null" >
+        supp_email = #{record.suppEmail,jdbcType=VARCHAR},
+      </if>
+      <if test="record.suppBank != null" >
+        supp_bank = #{record.suppBank,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update supplier
+    set supp_id = #{record.suppId,jdbcType=INTEGER},
+      supp_name = #{record.suppName,jdbcType=VARCHAR},
+      supp_address = #{record.suppAddress,jdbcType=VARCHAR},
+      supp_phone = #{record.suppPhone,jdbcType=VARCHAR},
+      supp_email = #{record.suppEmail,jdbcType=VARCHAR},
+      supp_bank = #{record.suppBank,jdbcType=VARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.sam.pojo.Supplier" >
+    update supplier
+    <set >
+      <if test="suppName != null" >
+        supp_name = #{suppName,jdbcType=VARCHAR},
+      </if>
+      <if test="suppAddress != null" >
+        supp_address = #{suppAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="suppPhone != null" >
+        supp_phone = #{suppPhone,jdbcType=VARCHAR},
+      </if>
+      <if test="suppEmail != null" >
+        supp_email = #{suppEmail,jdbcType=VARCHAR},
+      </if>
+      <if test="suppBank != null" >
+        supp_bank = #{suppBank,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where supp_id = #{suppId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.sam.pojo.Supplier" >
+    update supplier
+    set supp_name = #{suppName,jdbcType=VARCHAR},
+      supp_address = #{suppAddress,jdbcType=VARCHAR},
+      supp_phone = #{suppPhone,jdbcType=VARCHAR},
+      supp_email = #{suppEmail,jdbcType=VARCHAR},
+      supp_bank = #{suppBank,jdbcType=VARCHAR}
+    where supp_id = #{suppId,jdbcType=INTEGER}
+  </update>
+</mapper>
