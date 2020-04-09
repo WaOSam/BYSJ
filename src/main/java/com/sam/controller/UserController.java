@@ -37,7 +37,6 @@ public class UserController extends BaseController<User, UserExample> {
     @Value("${setArrayDefault:user_name,user_phone,user_gender,user_type}")
     private String[] arr;
 
-
     private UserService userService;
 
     @Autowired
@@ -77,6 +76,40 @@ public class UserController extends BaseController<User, UserExample> {
         PageHelper.startPage(jsonObject.getIntValue(pageNum), jsonObject.getIntValue(pageSize));
         List<User> list = baseService.selectByCondition(condition);
         Page<User> res = new Page<>(new PageInfo<>(list));
+
+        return JSON.toJSONString(res);
+    }
+
+    /**
+     * 修改用户密码，需要验证原密码
+     *
+     * @param json 包含用户账号，旧密码，新密码json字符串
+     * @return java.lang.String
+     */
+    @RequestMapping("changePassword")
+    @ResponseBody
+    public String changePassword(@RequestBody String json) {
+        //解析json并使用
+        JSONObject jsonObject = JSON.parseObject(json);
+
+        //用户账号，原密码，新密码
+        Integer userAccount = jsonObject.getInteger("userAccount");
+        String oldPassword = jsonObject.getString("oldPassword");
+        String newPassword = jsonObject.getString("newPassword");
+
+        //查询用户所有信息，并验证原密码是否正确
+        User user = userService.login(userAccount);
+
+        //用于返回的json对象
+        JSONObject res = new JSONObject();
+        //密码错误，返回错误提示
+        if (!user.getUserPassword().equals(oldPassword)) {
+            res.put("msg", "原密码错误，更改失败！");
+        } else {
+            user.setUserPassword(newPassword);
+            userService.update(user);
+            res.put("msg", "密码更改完成！");
+        }
 
         return JSON.toJSONString(res);
     }

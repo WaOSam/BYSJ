@@ -1,5 +1,8 @@
 package com.sam.pojo;
 
+/**
+ * @author Sam
+ */
 public class User {
     private Integer userAccount;
 
