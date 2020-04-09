@@ -20,4 +20,9 @@ public class UserServiceImpl extends BaseServiceImpl<User, UserExample> implemen
     public User login(Integer account) {
         return userMapper.login(account);
     }
+
+    @Override
+    public Integer update(User user) {
+        return mapper.updateByPrimaryKeySelective(user);
+    }
 }
