@@ -2,6 +2,7 @@ package com.sam.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.sam.service.BaseService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -46,12 +47,17 @@ public class BaseController<E, T> {
     @RequestMapping("add")
     @ResponseBody
     public String add(@RequestBody E e) {
+        //用于返回的json对象
+        JSONObject res = new JSONObject();
+
         try {
             baseService.add(e);
-            return "{\"msg\":\"添加成功\"}";
+            res.put("msg", "添加成功！");
+            return JSON.toJSONString(res);
         } catch (Exception ex) {
             ex.printStackTrace();
-            return "{\"msg\":\"发生错误，添加失败\"}";
+            res.put("msg", "发生错误，添加失败！");
+            return JSON.toJSONString(res);
         }
     }
 
@@ -64,16 +70,20 @@ public class BaseController<E, T> {
     @RequestMapping("delete")
     @ResponseBody
     public String delete(@RequestBody String ids) {
+        //用于返回的json对象
+        JSONObject res = new JSONObject();
+
         try {
             JSONArray array = JSON.parseArray(ids);
             for (Object id : array) {
                 baseService.deleteById((Integer) id);
             }
-
-            return "{\"msg\":\"删除成功\"}";
+            res.put("msg", "删除成功！");
+            return JSON.toJSONString(res);
         } catch (Exception e) {
             e.printStackTrace();
-            return "{\"msg\":\"发生错误，删除失败\"}";
+            res.put("msg", "发生错误，删除失败!");
+            return JSON.toJSONString(res);
         }
     }
 
@@ -86,12 +96,17 @@ public class BaseController<E, T> {
     @RequestMapping("update")
     @ResponseBody
     public String update(@RequestBody E e) {
+        //用于返回的json对象
+        JSONObject res = new JSONObject();
+
         try {
             baseService.update(e);
-            return "{\"msg\":\"更新成功\"}";
+            res.put("msg", "更新成功！");
+            return JSON.toJSONString(res);
         } catch (Exception ex) {
             ex.printStackTrace();
-            return "{\"msg\":\"发生错误，更新失败\"}";
+            res.put("msg", "发生错误，更新失败！");
+            return JSON.toJSONString(res);
         }
     }
 

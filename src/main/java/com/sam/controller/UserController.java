@@ -105,10 +105,12 @@ public class UserController extends BaseController<User, UserExample> {
         //密码错误，返回错误提示
         if (!user.getUserPassword().equals(oldPassword)) {
             res.put("msg", "原密码错误，更改失败！");
+            res.put("change", false);
         } else {
             user.setUserPassword(newPassword);
             userService.update(user);
             res.put("msg", "密码更改完成！");
+            res.put("change", true);
         }
 
         return JSON.toJSONString(res);
