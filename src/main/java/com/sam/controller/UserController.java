@@ -1,6 +1,7 @@
 package com.sam.controller;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -12,6 +13,8 @@ import com.sam.utils.Tool;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -114,5 +117,41 @@ public class UserController extends BaseController<User, UserExample> {
         }
 
         return JSON.toJSONString(res);
+    }
+
+    /**
+     * 根据主键数组重置密码
+     *
+     * @param ids 前端主键数组json字符化
+     * @return java.lang.String
+     */
+    @RequestMapping("reset")
+    @ResponseBody
+    public String reset(@RequestBody String ids) {
+        //用于返回的json对象
+        JSONObject res = new JSONObject();
+
+        try {
+            JSONArray array = JSON.parseArray(ids);
+            for (Object id : array) {
+                User user = new User();
+                user.setUserAccount((Integer)id);
+                user.setUserPassword("000000");
+
+                userService.update(user);
+            }
+
+            res.put("msg", "密码重置成功！");
+            res.put("reset", true);
+            return JSON.toJSONString(res);
+        } catch (Exception e) {
+            e.printStackTrace();
+
+            // 事务回滚
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            res.put("msg", "发生错误，密码重置失败!");
+            res.put("reset", false);
+            return JSON.toJSONString(res);
+        }
     }
 }
