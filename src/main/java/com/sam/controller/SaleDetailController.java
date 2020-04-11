@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
  * 作者 Sam_T
  * 描述
  * 日期 2020-03-25 17:06
+ * @author Sam
  */
 @Controller
 @RequestMapping(value = "saleDetail", produces = "application/json; charset=utf-8")

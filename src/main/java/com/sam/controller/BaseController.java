@@ -5,6 +5,8 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.sam.service.BaseService;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -69,6 +71,7 @@ public class BaseController<E, T> {
      */
     @RequestMapping("delete")
     @ResponseBody
+    @Transactional
     public String delete(@RequestBody String ids) {
         //用于返回的json对象
         JSONObject res = new JSONObject();
@@ -78,11 +81,17 @@ public class BaseController<E, T> {
             for (Object id : array) {
                 baseService.deleteById((Integer) id);
             }
+
             res.put("msg", "删除成功！");
+            res.put("delete", true);
             return JSON.toJSONString(res);
         } catch (Exception e) {
             e.printStackTrace();
+
+            // 事务回滚
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             res.put("msg", "发生错误，删除失败!");
+            res.put("delete", false);
             return JSON.toJSONString(res);
         }
     }

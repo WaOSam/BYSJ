@@ -73,6 +73,9 @@ public class ReceiptController extends BaseController<Receipt, ReceiptExample> {
     @ResponseBody
     @Transactional
     public String addReceiptAndDetail(@RequestBody String jsonString) {
+        //用于返回的json对象
+        JSONObject res = new JSONObject();
+
         JSONObject jsonObject = JSON.parseObject(jsonString);
 
         Receipt receipt = JSON.parseObject(jsonObject.getString("receipt"), Receipt.class);
@@ -84,7 +87,8 @@ public class ReceiptController extends BaseController<Receipt, ReceiptExample> {
             receDetailService.add(receDetail);
         }
 
-        return "{\"msg\":\"添加成功\"}";
+        res.put("msg", "添加成功！");
+        return JSON.toJSONString(res);
     }
 
     /**
@@ -97,6 +101,10 @@ public class ReceiptController extends BaseController<Receipt, ReceiptExample> {
     @ResponseBody
     @Transactional
     public String deleteReceiptAndDetail(@RequestBody String idsJson){
+
+        //用于返回的json对象
+        JSONObject res = new JSONObject();
+
         //获取id集合
         List<Integer> ids = JSON.parseArray(idsJson, Integer.class);
 
@@ -105,7 +113,8 @@ public class ReceiptController extends BaseController<Receipt, ReceiptExample> {
         receiptExample.or().andReceIdIn(ids);
         receiptService.deleteByCondition(receiptExample);
 
-        return "{\"msg\":\"已成功删除进货单以及详情\"}";
+        res.put("msg", "已成功删除进货单以及详情!");
+        return JSON.toJSONString(res);
     }
 
     /**
@@ -118,6 +127,8 @@ public class ReceiptController extends BaseController<Receipt, ReceiptExample> {
     @ResponseBody
     @Transactional
     public String put(@RequestBody String idJson){
+        //用于返回的json对象
+        JSONObject res = new JSONObject();
         //更改进货单中的数据,state以及createTime
         Integer id = (Integer) JSON.parse(idJson);
         Receipt receipt = receiptService.selectById(id);
@@ -136,7 +147,8 @@ public class ReceiptController extends BaseController<Receipt, ReceiptExample> {
             storeService.add(store);
         }
 
-        return "{\"msg\":\"该进货单中的商品已经成功入库\"}";
+        res.put("msg", "该进货单中的商品已经成功入库！");
+        return JSON.toJSONString(res);
     }
 
     /**
@@ -148,6 +160,9 @@ public class ReceiptController extends BaseController<Receipt, ReceiptExample> {
     @RequestMapping(value = "out", produces = "application/json; charset=utf-8")
     @ResponseBody
     public String out(@RequestBody String idJson){
+        //用于返回的json对象
+        JSONObject res = new JSONObject();
+
         try {
             Integer id = (Integer) JSON.parse(idJson);
             Receipt receipt = receiptService.selectById(id);
@@ -155,10 +170,14 @@ public class ReceiptController extends BaseController<Receipt, ReceiptExample> {
             receipt.setReceState(3);
             receipt.setReceCreatetime(new Date());
             receiptService.update(receipt);
-            return "{\"msg\":\"成功完成进货退货操作\"}";
+
+            res.put("msg", "成功完成进货退货操作！");
+            return JSON.toJSONString(res);
         } catch (Exception e) {
             e.printStackTrace();
-            return "{\"msg\":\"发生错误，退货失败\"}";
+
+            res.put("msg", "发生错误，退货失败！");
+            return JSON.toJSONString(res);
         }
     }
 

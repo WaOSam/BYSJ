@@ -74,6 +74,8 @@ public class SaleController extends BaseController<Sale, SaleExample> {
     @ResponseBody
     @Transactional
     public String addSaleAndDetail(@RequestBody String jsonString) {
+        //用于返回的json对象
+        JSONObject res = new JSONObject();
         JSONObject jsonObject = JSON.parseObject(jsonString);
 
         //添加销售单
@@ -86,7 +88,8 @@ public class SaleController extends BaseController<Sale, SaleExample> {
             saleDetailService.add(saleDetail);
         }
 
-        return "{\"msg\":\"添加成功\"}";
+        res.put("msg", "添加成功！");
+        return JSON.toJSONString(res);
     }
 
     /**
@@ -99,6 +102,8 @@ public class SaleController extends BaseController<Sale, SaleExample> {
     @ResponseBody
     @Transactional
     public String deleteSaleAndDetail(@RequestBody String idsJson) {
+        //用于返回的json对象
+        JSONObject res = new JSONObject();
         //获取id集合
         List<Integer> ids = JSON.parseArray(idsJson, Integer.class);
 
@@ -107,7 +112,8 @@ public class SaleController extends BaseController<Sale, SaleExample> {
         saleExample.or().andSaleIdIn(ids);
         saleService.deleteByCondition(saleExample);
 
-        return "{\"msg\":\"已成功删除销售单以及详情\"}";
+        res.put("msg", "已成功删除销售单以及详情!");
+        return JSON.toJSONString(res);
     }
 
     /**
@@ -120,6 +126,8 @@ public class SaleController extends BaseController<Sale, SaleExample> {
     @ResponseBody
     @Transactional(propagation = Propagation.REQUIRED)
     public String sell(@RequestBody String idJson) {
+        //用于返回的json对象
+        JSONObject res = new JSONObject();
         //更新销售单中数据,state以及createTime
         Integer id = (Integer) JSON.parse(idJson);
         Sale sale = saleService.selectById(id);
@@ -144,11 +152,13 @@ public class SaleController extends BaseController<Sale, SaleExample> {
             }else {
                 //说明库存不够,抛出异常,事务回滚
                 TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-                return "{\"msg\":\"库存不足,出库失败\"}";
+                res.put("msg", "库存不足，出库失败");
+                return JSON.toJSONString(res);
             }
         }
 
-        return "{\"msg\":\"该销售单中的商品已经成功出库\"}";
+        res.put("msg", "该销售单中的商品已经成功出库！");
+        return JSON.toJSONString(res);
     }
 
     /**
@@ -161,6 +171,9 @@ public class SaleController extends BaseController<Sale, SaleExample> {
     @ResponseBody
     @Transactional(propagation = Propagation.REQUIRED)
     public String back(@RequestBody String idJson) {
+        //用于返回的json对象
+        JSONObject res = new JSONObject();
+
         Integer id = (Integer) JSON.parse(idJson);
         Sale sale = saleService.selectById(id);
 
@@ -181,7 +194,8 @@ public class SaleController extends BaseController<Sale, SaleExample> {
             storeService.update(store);
         }
 
-        return "{\"msg\":\"成功完成销售退货操作\"}";
+        res.put("msg", "成功完成销售单退货操作！");
+        return JSON.toJSONString(res);
     }
 
     /**
