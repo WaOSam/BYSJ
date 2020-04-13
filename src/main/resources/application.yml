@@ -9,6 +9,12 @@ page:
   #选择排序的字段，按下列定义顺序，例如：该参数值为0，那么选中customer中的name排序
   clause: clause
 
+#排序：字段名数组：user_name,user_phone,user_gender
+#定义user接收的分页条件查询参数名
+user:
+  name: userName
+  gender: userGender
+
 #定义customer接收的分页条件查询参数名
 #字段名数组：cust_name,cust_address,cust_phone,cust_bank
 customer:
@@ -30,12 +36,6 @@ supplier:
   address: suppAddress
   phone: suppPhone
   bank: suppBank
-
-#排序：字段名数组：user_name,user_phone,user_gender,user_type
-#定义user接收的分页条件查询参数名
-user:
-  name: userName
-  gender: userGender
 
 #排序：字段名称数组：rece_createtime,rece_sum,rece_state
 #定义receipt接收的分页条件查询参数名

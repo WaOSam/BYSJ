@@ -54,10 +54,12 @@ public class BaseController<E, T> {
 
         try {
             baseService.add(e);
+            res.put("add", true);
             res.put("msg", "添加成功！");
             return JSON.toJSONString(res);
         } catch (Exception ex) {
             ex.printStackTrace();
+            res.put("add", false);
             res.put("msg", "发生错误，添加失败！");
             return JSON.toJSONString(res);
         }

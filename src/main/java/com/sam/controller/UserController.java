@@ -37,7 +37,7 @@ public class UserController extends BaseController<User, UserExample> {
     /**
      * 数据库中的字段，用于字段排序的选择，定值
      */
-    @Value("${setArrayDefault:user_name,user_phone,user_gender,user_type}")
+    @Value("${setArrayDefault:user_name,user_phone,user_gender}")
     private String[] arr;
 
     private UserService userService;
@@ -65,6 +65,9 @@ public class UserController extends BaseController<User, UserExample> {
 
         //进行字段排序
         condition.setOrderByClause(Tool.orderByClause(jsonObject, order, clause, arr));
+
+//        搜索的对象全为员工
+        criteria.andUserTypeEqualTo(1);
 
         //姓名模糊查询
         if (jsonObject.containsKey(name)) {

@@ -11,7 +11,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupp
  * @author Sam_T
  * @date 2020-04-01 21:37
  */
-@Configuration
+//@Configuration
 public class InterceptionRequest extends WebMvcConfigurationSupport {
     /**
      * 在springboot2.0.0之后继承WebMvcConfigurationSupport类，重写addInterceptors方法
